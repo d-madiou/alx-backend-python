@@ -1,6 +1,7 @@
+import contextlib
 import mysql.connector
 
-def stream_user():
+def stream_users():
     try:
         connection = mysql.connector.connect(
             host='127.0.0.1',
@@ -11,13 +12,10 @@ def stream_user():
         cursor = connection.cursor(dictionary=True)
         cursor.execute('SELECT * FROM user_data')
 
-        for row in cursor:
-            yield row
+        yield from cursor
     except mysql.connector.Error as err:
         print(f"Database error: {err}")
     finally:
-        try:
+        with contextlib.suppress(Exception):
             cursor.close()
             connection.close()
-        except Exception:
-            pass
