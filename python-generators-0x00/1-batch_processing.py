@@ -1,7 +1,7 @@
 import contextlib
 import mysql.connector
 
-def stream_users():
+def stream_users_in_batches(batch_size):
     connection = None
     cursor = None
     try:
@@ -14,8 +14,11 @@ def stream_users():
         cursor = connection.cursor(dictionary=True)
         cursor.execute('SELECT * FROM user_data')
 
-        for row in cursor:
-            yield row
+        while True:
+            batch = cursor.fetchmany(batch_size)
+            if not batch:
+                break
+            yield batch
 
     except mysql.connector.Error as err:
         print(f"Database error: {err}")
@@ -25,3 +28,9 @@ def stream_users():
                 cursor.close()
             if connection:
                 connection.close()
+
+def batch_processing(batch_size):
+    for batch in stream_users_in_batches(batch_size):
+        filter_users = (user for user in batch if user['age'] > 25 )
+        for user in filter_users:
+          yield user
