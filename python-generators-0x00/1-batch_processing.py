@@ -2,6 +2,7 @@ import contextlib
 import mysql.connector
 
 def stream_users_in_batches(batch_size):
+    """this part is for the stream users """
     connection = None
     cursor = None
     try:
@@ -19,6 +20,7 @@ def stream_users_in_batches(batch_size):
             if not batch:
                 break
             yield batch
+            return cursor.fetchmany()
 
     except mysql.connector.Error as err:
         print(f"Database error: {err}")
