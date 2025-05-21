@@ -14,9 +14,7 @@ def stream_users():
         cursor = connection.cursor(dictionary=True)
         cursor.execute('SELECT * FROM user_data')
 
-        for row in cursor:
-            yield row
-
+        yield from cursor
     except mysql.connector.Error as err:
         print(f"Database error: {err}")
     finally:
