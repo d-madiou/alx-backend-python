@@ -1,7 +1,8 @@
-#in this one we will open and close the database
 import sqlite3
 
 class DatabaseConnection:
+    def __init__(self):
+        self.conn = None
     def __enter__(self):
         self.conn = sqlite3.connect('users.db')
         return self.conn
@@ -13,4 +14,3 @@ with DatabaseConnection() as db:
     cursor.execute("SELECT * FROM users")
     result = cursor.fetchall()
     print(result)
-
