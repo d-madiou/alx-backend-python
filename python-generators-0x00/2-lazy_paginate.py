@@ -31,6 +31,5 @@ def lazy_paginate(page_size):
         batch = paginate_users(page_size, offset)
         if not batch:
             break
-        for user in batch:
-            yield user
+        yield from batch
         offset += page_size
