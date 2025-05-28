@@ -21,8 +21,6 @@ class TestGithubOrgClient(unittest.TestCase):
         mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
         self.assertEqual(result, test_payload)
 
-    # --- New test case example below ---
-
     @patch("client.GithubOrgClient.org", new_callable=PropertyMock)
     def test_public_repos_url(self, mock_org):
         """
@@ -40,8 +38,35 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # Assertions
         self.assertEqual(result, test_payload["repos_url"])
-        mock_org.assert_called_once() # Ensure the 'org' property was accessed
+        mock_org.assert_called_once()  # Ensure the 'org' property was accessed
+        
+        # --- New test_public_repos_url method starts here ---
+    def test_public_repos_url(self):
+        """
+        Unit-test GithubOrgClient._public_repos_url.
+        Mocks the 'org' property to return a known payload and asserts
+        that _public_repos_url returns the correct 'repos_url'.
+        """
+        # Define the payload that the mocked 'org' property will return
+        test_payload = {"repos_url": "https://api.github.com/orgs/testorg/repos"}
 
+        # Patch GithubOrgClient.org using PropertyMock as a context manager
+        with patch("client.GithubOrgClient.org", new_callable=PropertyMock) as mock_org:
+            # Configure the mocked 'org' property to return our test_payload
+            mock_org.return_value = test_payload
+
+            # Instantiate GithubOrgClient (the org_name here doesn't matter much
+            # because the 'org' property is fully mocked)
+            client = GithubOrgClient("some_org")
+
+            # Call the property being tested
+            result_url = client._public_repos_url
+
+            # Assertions
+            # 1. Check if the 'org' property was accessed
+            mock_org.assert_called_once()
+            # 2. Check if the returned URL matches the expected one from the payload
+            self.assertEqual(result_url, test_payload["repos_url"])
 
 if __name__ == "__main__":
     unittest.main()
