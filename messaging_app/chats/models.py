@@ -2,8 +2,10 @@
 """Models for the chats app."""
 
 import uuid
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
 
 class User(AbstractUser):
     """
@@ -12,8 +14,10 @@ class User(AbstractUser):
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
+    password = models.CharField(max_length=128)  # This field is inherited from AbstractUser
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'phone_number']
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'phone_number', 'password', 'created_at']
     USERNAME_FIELD = 'username'  # You can change this to 'email' if you want to use email login
 
     def __str__(self):
