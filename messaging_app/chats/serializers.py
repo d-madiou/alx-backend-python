@@ -1,23 +1,50 @@
-# building serializer for the models in the chats app
-from rest_framework import serializers
-from .models import CustomUser, Conversation, Message
+#!/usr/bin/env python3
+"""Serializers for chats app."""
 
-class CustomUserSerializer(serializers.ModelSerializer):
+from rest_framework import serializers
+from .models import User, Conversation, Message
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user model.
+    """
     class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        model = User
+        fields = ['user_id', 'username', 'email', 'first_name', 'last_name', 'phone_number']
 
 class ConversationSerializer(serializers.ModelSerializer):
-    participants = CustomUserSerializer(many=True, read_only=True)
+    """
+    Serializer for conversation model.
+    """
+    participants = UserSerializer(many=True, read_only=True)
+    participant_ids = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), many=True, write_only=True
+    )
 
     class Meta:
         model = Conversation
-        fields = ['id', 'participants', 'created_at']
+        fields = ['conversation_id', 'participants', 'participant_ids']
+
+    def create(self, validated_data):
+        participant_ids = validated_data.pop('participant_ids')
+        conversation = Conversation.objects.create(**validated_data)
+        conversation.participants.set(participant_ids)
+        return conversation
 
 class MessageSerializer(serializers.ModelSerializer):
-    sender = CustomUserSerializer(read_only=True)
+    """
+    Serializer for message model.
+    """
+    sender_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
-        fields = ['id', 'conversation', 'sender', 'content', 'timestamp']
-        read_only_fields = ['id', 'timestamp']
+        fields = ['message_id', 'sender', 'sender_name', 'conversation', 'message_body', 'sent_at']
+
+    def get_sender_name(self, obj):
+        return obj.sender.username
+
+    def validate_message_body(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Message body cannot be empty.")
+        return value
