@@ -125,3 +125,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INSTALLED_APPS += [
     'chats',
 ]
+
+["rest_framework.permissions.IsAuthenticated", "DEFAULT_AUTHENTICATION_CLASSES", "rest_framework.authentication.SessionAuthentication"]
