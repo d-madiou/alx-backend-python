@@ -127,3 +127,5 @@ INSTALLED_APPS += [
 ]
 
 ["rest_framework.permissions.IsAuthenticated", "DEFAULT_AUTHENTICATION_CLASSES", "rest_framework.authentication.SessionAuthentication"]
+
+AUTH_USER_MODEL = 'chats.CustomUser'
