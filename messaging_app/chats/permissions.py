@@ -1,0 +1,1 @@
+# this is the permissions.py file for the chats app
