@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,12 +41,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'chats',  # Custom app for chat functionality
-    # Middleware for additional functionalities
     'django_filters',
-    'Django-Middleware-0x03'
+    # Note: 'Django-Middleware-0x03' is your project name, not an app, so it's removed from here
 ]
 
-# Let's add the rest framework settings
+# REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -57,8 +57,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20
 }
-# Let's import timedelta for token lifetime settings
-from datetime import timedelta
+
 # JWT settings
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -76,10 +75,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # Custom middleware - ORDER MATTERS!
     'chats.middleware.RequestLoggingMiddleware',          # Logs all requests
     'chats.middleware.RestrictAccessByTimeMiddleware',    # Restricts chat access by time
     'chats.middleware.OffensiveLanguageMiddleware',       # Rate limits messages per IP
-    'chats.middleware.RolePermissionMiddleware',  # Checks user roles for admin/moderator actions
+    'chats.middleware.RolePermissionMiddleware',          # Checks user roles for admin/moderator actions
 ]
 
 ROOT_URLCONF = 'Django-Middleware-0x03.urls'
@@ -91,6 +92,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -154,5 +156,25 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+# Custom User Model
 AUTH_USER_MODEL = 'chats.CustomUser'
+
+# Logging configuration for better control over request logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'requests.log',
+        },
+    },
+    'loggers': {
+        'request_logger': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
