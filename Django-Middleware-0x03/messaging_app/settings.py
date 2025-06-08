@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'chats',
+    'chats',  # Custom app for chat functionality
+    # Middleware for additional functionalities
     'django_filters',
+    'Django-Middleware-0x03'
 ]
 
 # Let's add the rest framework settings
@@ -80,7 +82,7 @@ MIDDLEWARE = [
     'chats.middleware.RolePermissionMiddleware',  # Checks user roles for admin/moderator actions
 ]
 
-ROOT_URLCONF = 'messaging_app.urls'
+ROOT_URLCONF = 'Django-Middleware-0x03.urls'
 
 TEMPLATES = [
     {
@@ -97,7 +99,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'messaging_app.wsgi.application'
+WSGI_APPLICATION = 'Django-Middleware-0x03.wsgi.application'
 
 
 # Database

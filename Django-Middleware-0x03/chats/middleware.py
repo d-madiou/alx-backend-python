@@ -16,7 +16,7 @@ logging.basicConfig(
 
 class RequestLoggingMiddleware:
     """Middleware to log user requests with timestamp, user, and path information."""
-    
+
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         """Initialize middleware with get_response callable."""
         self.get_response = get_response
