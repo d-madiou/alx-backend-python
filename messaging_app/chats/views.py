@@ -10,6 +10,9 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipantOfConversation
 from typing import Type
+from rest_framework import filters  # You'll need this
+from django_filters.rest_framework import DjangoFilterBackend  # And this
+
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -51,6 +54,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend]  # Add other backends if needed
     ordering = ['-timestamp']
 
     def get_queryset(self):

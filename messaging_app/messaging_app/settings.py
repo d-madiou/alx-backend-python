@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'chats',
     'rest_framework.authentication.BasicAuthentication',
+    'django.filter',
 ]
 
 # Let's add the rest framework settings
@@ -52,6 +53,8 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20
 }
 # Let's import timedelta for token lifetime settings
 from datetime import timedelta
