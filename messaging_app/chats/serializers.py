@@ -2,14 +2,14 @@
 """Serializers for chats app."""
 
 from rest_framework import serializers
-from .models import User, Conversation, Message
+from .models import CustomUser, Conversation, Message
 
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for user model.
     """
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['user_id', 'username', 'email', 'first_name', 'last_name', 'phone_number']
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     """
     participants = UserSerializer(many=True, read_only=True)
     participant_ids = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), many=True, write_only=True
+        queryset=CustomUser.objects.all(), many=True, write_only=True
     )
 
     class Meta:

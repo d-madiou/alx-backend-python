@@ -10,7 +10,6 @@ class IsParticipantOfConversation(permissions.BasePermission):
     Custom permission to only allow participants of a conversation to access it.
     Allows all CRUD operations (GET, POST, PUT, PATCH, DELETE) for participants.
     """
-    
     def has_permission(self, request: Request, view: View) -> bool:
         """
         Check if user is authenticated for all requests.

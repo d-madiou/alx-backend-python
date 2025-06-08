@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
-class User(AbstractUser):
+class CustomUser(AbstractUser):  # Changed from User to CustomUser
     """
     Custom user model that extends Django's AbstractUser with additional fields.
     """
@@ -28,7 +28,7 @@ class Conversation(models.Model):
     Represents a conversation between multiple users.
     """
     conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    participants = models.ManyToManyField(User, related_name='conversations')
+    participants = models.ManyToManyField(CustomUser, related_name='conversations')  # Updated reference
 
     def __str__(self):
         return f"Conversation {self.conversation_id}"
@@ -38,7 +38,7 @@ class Message(models.Model):
     Represents a message in a conversation.
     """
     message_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # Updated reference
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
     message_body = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)

@@ -1,4 +1,4 @@
-from Django_filters import rest_framework as filters
+from django_filters import rest_framework as filters
 from .models import Message
 from typing import Type
 from django.contrib.auth.models import User
@@ -9,7 +9,6 @@ class MessageFilter(filters.FilterSet):
         queryset=User.objects.all(),
         label='Sender',
     )
-    
     start_date = filters.DateFilter(
         field_name='created_at',
         lookup_expr='gte',

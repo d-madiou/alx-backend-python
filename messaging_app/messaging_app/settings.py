@@ -40,8 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'chats',
-    'rest_framework.authentication.BasicAuthentication',
-    'django.filter',
+    'django_filters',
 ]
 
 # Let's add the rest framework settings
@@ -149,10 +148,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-INSTALLED_APPS += [
-    'chats',
-]
-
-["rest_framework.permissions.IsAuthenticated", "DEFAULT_AUTHENTICATION_CLASSES", "rest_framework.authentication.SessionAuthentication"]
 
 AUTH_USER_MODEL = 'chats.CustomUser'
