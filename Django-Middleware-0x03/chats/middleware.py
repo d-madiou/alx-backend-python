@@ -127,7 +127,7 @@ class OffensiveLanguageMiddleware:
         return self.get_response(request)
 
 
-class RolePermissionMiddleware:
+class RolepermissionMiddleware:
     """Middleware to check user roles before allowing access to specific admin/moderator actions."""
     
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:

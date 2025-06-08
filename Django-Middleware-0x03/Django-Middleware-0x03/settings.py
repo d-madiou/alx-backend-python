@@ -80,7 +80,7 @@ MIDDLEWARE = [
     'chats.middleware.RequestLoggingMiddleware',          # Logs all requests
     'chats.middleware.RestrictAccessByTimeMiddleware',    # Restricts chat access by time
     'chats.middleware.OffensiveLanguageMiddleware',       # Rate limits messages per IP
-    'chats.middleware.RolePermissionMiddleware',          # Checks user roles for admin/moderator actions
+    'chats.middleware.RolepermissionMiddleware',          # Checks user roles for admin/moderator actions
 ]
 
 ROOT_URLCONF = 'Django-Middleware-0x03.urls'
