@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
+from .permissions import IsParticipantOfConversation
+from typing import Type
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """ViewSet for handling conversations."""
