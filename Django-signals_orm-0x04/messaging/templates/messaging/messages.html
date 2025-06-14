@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages</title>
+</head>
+<body>
+    <h1>Your Messages</h1>
+    <h2>Messages test</h2>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>
+                    <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+                    <br>
+                    <small>Sent at: {{ message.timestamp }}</small>
+                    {% if message.edited %}
+                        <em>(edited)</em>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No messages to show.</p>
+    {% endif %}
+</body>
+</html>

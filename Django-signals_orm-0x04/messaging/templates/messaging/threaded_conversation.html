@@ -1,0 +1,35 @@
+<!--threaded_conversation.html-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Threaded Conversation</title>
+    <!-- Add any necessary CSS or JavaScript files here -->
+</head>
+<body>
+    <h1>Threaded Conversation</h1>
+
+    {% if conversation %}
+        <h2>Conversation with {{ conversation.participant.username }}</h2>
+        
+        <ul>
+            {% for message in conversation.messages.all %}
+                <li>
+                    <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+                    <br>
+                    <small>Sent at: {{ message.timestamp }}</small>
+                    {% if message.edited %}
+                        <em>(edited)</em>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+        <form method="post" action="{% url 'send_message' conversation.id %}">
+            {% csrf_token %}
+            <textarea name="content" placeholder="Type your message here..." required></textarea>
+            <button type="submit">Send</button>
+        </form>
+
+    {% else %}
+        <p>No conversation found.</p>
+    {% endif %}

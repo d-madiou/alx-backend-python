@@ -1,0 +1,12 @@
+<h2>Notifications</h2>
+<ul>
+  {% for notification in notifications %}
+    <li>
+      <strong>{{ notification.message.sender.username }}</strong> sent you a message:
+      "{{ notification.message.content }}"
+      <br><small>{{ notification.created_at }}</small>
+    </li>
+  {% empty %}
+    <li>No notifications.</li>
+  {% endfor %}
+</ul>

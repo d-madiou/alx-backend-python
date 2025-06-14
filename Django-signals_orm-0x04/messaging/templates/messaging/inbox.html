@@ -1,0 +1,52 @@
+<h2>Messages</h2>
+<ul>
+  {% for message in messages %}
+    <li><strong>From:</strong> {{ message.sender }} - {{ message.content }} ({{ message.timestamp }})</li>
+  {% empty %}
+    <li>No messages found.</li>
+  {% endfor %}
+</ul>
+
+<h2>Notifications</h2>
+<ul>
+  {% for notification in notifications %}
+    <li>{{ notification.message.content }} - {{ notification.timestamp }}</li>
+  {% empty %}
+    <li>No notifications.</li>
+  {% endfor %}
+</ul>
+<form method="post" action="{% url 'send_message' %}">
+  {% csrf_token %}
+  <label for="recipient">Recipient:</label>
+  <input type="text" id="recipient" name="recipient" required>
+  
+  <label for="content">Message:</label>
+  <textarea id="content" name="content" required></textarea>
+  
+  <button type="submit">Send Message</button>
+  {% for history in message.histories.all %}
+  <p>Old content ({{ history.edited_at }}): {{ history.old_content }}</p>
+{% endfor %}
+</form>
+
+{% if messages %}
+  <h3>Message History</h3>
+  <ul>
+    {% for message in messages %}
+      <li>{{ message.content }} - {{ message.timestamp }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No message history available.</p>
+{% endif %}
+
+{% if notifications %}
+  <h3>Notifications</h3>
+  <ul>
+    {% for notification in notifications %}
+      <li>{{ notification.message.content }} - {{ notification.timestamp }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No notifications available.</p>
+{% endif %}
