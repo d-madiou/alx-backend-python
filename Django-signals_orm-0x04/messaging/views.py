@@ -45,7 +45,7 @@ def notification_list(request):
 def unread_messages(request):
     # Use the custom manager's method to get unread messages for the current user
     # The .only() optimization is handled within the UnreadMessagesManager's for_receiver method
-    messages = Message.unread.for_receiver(request.user)
+    messages = Message.unread.unread_for_user(request.user)
     return render(request, 'messaging/unread_messages.html', {'unread_messages': messages})
 
 @login_required # Added login_required for this sensitive action
