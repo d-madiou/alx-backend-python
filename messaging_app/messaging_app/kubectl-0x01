@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Scale the deployment to 3 replicas
+echo "Scaling Django app deployment to 3 replicas..."
+kubectl scale deployment messaging-app --replicas=3
+
+# Wait for scaling to complete
+echo "Waiting for pods to be ready..."
+sleep 10
+
+# List all pods to verify
+echo "Listing all running pods:"
+kubectl get pods
+
+# Monitor resource usage
+echo "Resource usage:"
+kubectl top pods
+
+# Run load testing with wrk (must be installed)
+echo "Running load test with wrk (default: 10s)..."
+wrk http://<your-node-ip>:<port>  # Replace with actual exposed IP and port
