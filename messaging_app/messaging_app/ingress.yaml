@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: messaging-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true" # <-- Add this annotation
+spec:
+  rules:
+    - host: messaging.local
+      http:
+        paths:
+          - path: /?(.*) # This is a regular expression
+            pathType: ImplementationSpecific # <-- Change this to ImplementationSpecific
+            backend:
+              service:
+                name: messaging-service
+                port:
+                  number: 80
