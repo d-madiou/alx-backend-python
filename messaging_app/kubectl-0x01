@@ -18,4 +18,4 @@ kubectl top pods
 
 # Run load testing with wrk (must be installed)
 echo "Running load test with wrk (default: 10s)..."
-wrk http://<your-node-ip>:<port>  # Replace with actual exposed IP and port
+wrk http://10.111.72.70:80  
