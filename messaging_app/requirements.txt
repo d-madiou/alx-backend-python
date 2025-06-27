@@ -33,13 +33,3 @@ djangorestframework==3.14.0
 python-dotenv==1.0.0
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('MYSQL_DATABASE'),
-        'USER': env('MYSQL_USER'),
-        'PASSWORD': env('MYSQL_PASSWORD'),
-        'HOST': env('DB_HOST'),  # This must match the service name in docker-compose
-        'PORT': env('DB_PORT'),
-    }
-}
