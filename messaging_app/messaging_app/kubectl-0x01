@@ -1,21 +1,71 @@
 #!/bin/bash
 
-# Scale the deployment to 3 replicas
-echo "Scaling Django app deployment to 3 replicas..."
-kubectl scale deployment messaging-app --replicas=3
+# This script scales the Django app deployment, verifies pods,
+# performs load testing, and monitors resource usage.
 
-# Wait for scaling to complete
-echo "Waiting for pods to be ready..."
-sleep 10
+# --- Configuration ---
+DEPLOYMENT_NAME="messaging-app"
+REPLICAS=3
+LOAD_TEST_URL="http://10.111.72.70:80" # IMPORTANT: Replace this with your actual URL
+WAIT_TIME=10 # seconds to wait for pods to become ready
 
-# List all pods to verify
-echo "Listing all running pods:"
-kubectl get pods
+# --- Prerequisites Check ---
+echo "--- Checking prerequisites ---"
+if ! command -v kubectl &> /dev/null
+then
+    echo "Error: kubectl is not installed or not in PATH."
+    echo "Please install kubectl and configure it to connect to your Kubernetes cluster."
+    exit 1
+fi
 
-# Monitor resource usage
-echo "Resource usage:"
-kubectl top pods
+if ! command -v wrk &> /dev/null
+then
+    echo "Warning: wrk (load testing tool) is not installed."
+    echo "Please install wrk to perform load testing (e.g., sudo apt install wrk on Debian/Ubuntu)."
+    echo "Skipping wrk load test."
+    SKIP_WRK=true
+else
+    SKIP_WRK=false
+fi
 
-# Run load testing with wrk (must be installed)
-echo "Running load test with wrk (default: 10s)..."
-wrk http://10.111.72.70:80  # Replace with actual exposed IP and port
+# --- Step 1: Scale the Django app deployment ---
+echo "--- Scaling deployment '$DEPLOYMENT_NAME' to $REPLICAS replicas ---"
+kubectl scale deployment "$DEPLOYMENT_NAME" --replicas="$REPLICAS"
+
+# Check if the scaling command was successful
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to scale deployment '$DEPLOYMENT_NAME'. Please check if the deployment exists."
+    exit 1
+fi
+
+# --- Step 2: Wait for scaling to complete ---
+echo "--- Waiting for pods to be ready (approx. $WAIT_TIME seconds) ---"
+sleep "$WAIT_TIME"
+
+# --- Step 3: Verify that multiple pods are running ---
+echo "--- Listing all running pods for verification ---"
+kubectl get pods -l app=messaging-app # Assuming your deployment has a label like app=messaging-app
+
+# You can also add more specific checks here, e.g., for pod status
+# kubectl get pods -l app=messaging-app -o jsonpath='{.items[*].status.phase}'
+
+# --- Step 4: Monitor Resource Usage ---
+echo "--- Monitoring resource usage for pods ---"
+# Note: For kubectl top to work, Metrics Server must be deployed in your cluster.
+# If you get an error, it's likely Metrics Server is missing.
+kubectl top pods --containers=true -l app=messaging-app # Use --containers to see per-container usage
+
+# --- Step 5: Perform Load Testing (if wrk is installed) ---
+if [ "$SKIP_WRK" = false ]; then
+    echo "--- Running load test with wrk (default: 10s) ---"
+    echo "Target URL: $LOAD_TEST_URL"
+    # It's crucial that LOAD_TEST_URL is accessible from where this script is run.
+    # For Kubernetes services, this often means using the Ingress/LoadBalancer's external IP/hostname.
+    # If using Ingress with a hostname (e.g., messaging.local), you might need to add a Host header:
+    # wrk -H "Host: messaging.local" "$LOAD_TEST_URL"
+    wrk "$LOAD_TEST_URL"
+else
+    echo "--- Skipping load test as wrk is not installed ---"
+fi
+
+echo "--- Script execution complete ---"
