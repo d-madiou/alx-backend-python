@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        python 'Python3'
-     }
-
     stages {
         stage('Clone Repo') {
             steps {
@@ -14,13 +10,22 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r messaging_app/requirements.txt'
+                script { // Use a script block to access the tool step
+                    def pythonHome = tool 'Python3' // Get the path to your Python installation
+                    env.PATH = "${pythonHome}/bin:${env.PATH}" // Add Python to PATH
+
+                    // Now you can use pip as usual
+                    sh 'pip install -r messaging_app/requirements.txt'
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'pytest messaging_app/tests/ --junitxml=report.xml'
+                script { // Use a script block for tests if Python is only added in previous stage
+                    // If you added Python to PATH in a previous script block, it should be available
+                    sh 'pytest messaging_app/tests/ --junitxml=report.xml'
+                }
             }
         }
 
