@@ -4,17 +4,16 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git credentialsId: 'github-creds', url: 'https://github.com/d-madiou/alx-backend-python.git'
+                // ADD THE BRANCH PARAMETER HERE
+                git branch: 'main', credentialsId: 'github-creds', url: 'https://github.com/d-madiou/alx-backend-python.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                script { // Use a script block to access the tool step
-                    def pythonHome = tool 'Python3' // Get the path to your Python installation
-                    env.PATH = "${pythonHome}/bin:${env.PATH}" // Add Python to PATH
-
-                    // Now you can use pip as usual
+                script {
+                    def pythonHome = tool 'Python3'
+                    env.PATH = "${pythonHome}/bin:${env.PATH}"
                     sh 'pip install -r messaging_app/requirements.txt'
                 }
             }
@@ -22,8 +21,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                script { // Use a script block for tests if Python is only added in previous stage
-                    // If you added Python to PATH in a previous script block, it should be available
+                script {
                     sh 'pytest messaging_app/tests/ --junitxml=report.xml'
                 }
             }
