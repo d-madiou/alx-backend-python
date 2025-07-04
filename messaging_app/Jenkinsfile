@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker { image 'python:3.10' }
-    }
+    agent any
 
     stages {
         stage('Clone Repo') {
@@ -12,13 +10,22 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r messaging_app/requirements.txt'
+                sh '''
+                python3 --version || exit 1
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'pytest messaging_app/tests/ --junitxml=report.xml'
+                sh '''
+                . venv/bin/activate
+                pytest messaging_app/tests/ --junitxml=report.xml
+                '''
             }
         }
 
