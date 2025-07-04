@@ -1,29 +1,24 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'python:3.10' }
+    }
 
     stages {
         stage('Clone Repo') {
             steps {
-                // ADD THE BRANCH PARAMETER HERE
                 git branch: 'main', credentialsId: 'github-creds', url: 'https://github.com/d-madiou/alx-backend-python.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                script {
-                    def pythonHome = tool 'Python3'
-                    env.PATH = "${pythonHome}/bin:${env.PATH}"
-                    sh 'pip install -r messaging_app/requirements.txt'
-                }
+                sh 'pip install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                script {
-                    sh 'pytest messaging_app/tests/ --junitxml=report.xml'
-                }
+                sh 'pytest messaging_app/tests/ --junitxml=report.xml'
             }
         }
 
