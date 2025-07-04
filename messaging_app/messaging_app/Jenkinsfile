@@ -1,37 +1,49 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        IMAGE_NAME = 'dmadiou12/messaging_app'
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', credentialsId: 'github-creds', url: 'https://github.com/d-madiou/alx-backend-python.git'
+                git credentialsId: 'github-creds', url: 'https://github.com/d-madiou/alx-backend-python.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh '''
-                python3 --version || exit 1
-                python3 -m venv venv
-                . venv/bin/activate
-                pip install --upgrade pip
-                pip install -r messaging_app/requirements.txt
-                '''
+                sh 'python3 -m pip install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                . venv/bin/activate
-                pytest messaging_app/tests/ --junitxml=report.xml
-                '''
+                sh 'pytest messaging_app/tests/ --junitxml=report.xml'
             }
         }
 
         stage('Archive Test Report') {
             steps {
                 junit 'report.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('messaging_app') {
+                    sh "docker build -t $IMAGE_NAME:latest ."
+                }
+            }
+        }
+
+        stage('Push Docker Image to DockerHub') {
+            steps {
+                withDockerRegistry([credentialsId: 'dockerhub-creds']) {
+                    sh "docker push $IMAGE_NAME:latest"
+                }
             }
         }
     }
